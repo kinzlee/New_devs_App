@@ -83,12 +83,12 @@ def test_float_vs_decimal_demonstrates_the_bug():
     Lock in WHY the fix matters: adding many sub-cent values as floats drifts;
     the same addition as Decimal is exact.
     """
-    # 10,000 reservations of $0.1 each should be exactly $1000.
-    as_float = sum([0.1] * 10_000)
-    as_decimal = sum([Decimal("0.1")] * 10_000)
+    # Classic IEEE-754 drift: 0.1 + 0.2 is NOT 0.3 in float.
+    assert 0.1 + 0.2 != 0.3
+    assert Decimal("0.1") + Decimal("0.2") == Decimal("0.3")
 
-    assert as_float != 1000.0            # floats drift
-    assert as_decimal == Decimal("1000.0")  # Decimal is exact
+    # And repr proves the stored value is already wrong:
+    assert repr(0.1 + 0.2) == "0.30000000000000004"
 
 
 # ---------------------------------------------------------------------------
